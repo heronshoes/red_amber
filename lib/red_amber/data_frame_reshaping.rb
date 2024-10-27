@@ -250,7 +250,7 @@ module RedAmber
     #
     # @since 0.2.0
     #
-    def to_wide(name: :NAME, value: :VALUE)
+    def to_wide(name: :NAME, value: :VALUE, fill_missing: false, fill_with: nil)
       name = name.to_sym
       unless keys.include?(name)
         raise DataFrameArgumentError,
@@ -273,6 +273,22 @@ module RedAmber
         keeps, converts = row.partition { |k, _| keep_keys.include?(k) }
         h = converts.to_h
         hash[keeps.to_h][h[name].to_s.to_sym] = h[value]
+      end
+      if fill_missing
+        names = [].union(*hash.values.collect(&:keys))
+        hash.each_pair do |ns, vs|
+          next if vs.length == names.length
+
+          keys = vs.keys
+          values = vs.values
+          names.each_with_index do |n, i|
+            next if vs.key?(n)
+
+            keys.insert(i, n)
+            values.insert(i, fill_with)
+          end
+          hash[ns] = keys.zip(values).to_h
+        end
       end
       ks = hash.first[0].keys + hash.first[1].keys
       vs = hash.map { |k, v| k.values + v.values }.transpose

@@ -128,5 +128,20 @@ class DataFrameReshapingTest < Test::Unit::TestCase
       df = @df.rename(NAME: :key1, VALUE: :key2)
       assert_equal @str, df.to_wide(name: :key1, value: :key2).to_s
     end
+
+    test '#to_wide with missing values' do
+      df = DataFrame.new(
+        names: %w[name1 name1 name1 name2 name2 name3 name3 name3],
+        NAME: %w[One Two Three One Three One Two Three],
+        VALUE: [1.1, 2.1, 3.1, 1.2, 3.2, 1.3, 2.3, 3.3]
+      )
+      wide = DataFrame.new(
+        names: %w[name1 name2 name3],
+        One: [1.1, 1.2, 1.3],
+        Two: [2.1, nil, 2.3],
+        Three: [3.1, 3.2, 3.3]
+      )
+      assert_equal wide, df.to_wide(fill_missing: true)
+    end
   end
 end
