@@ -250,7 +250,7 @@ class GroupTest < Test::Unit::TestCase
         Vectors : 3 numeric
         # key       type   level data_preview
         0 :i        uint8      4 [0, 1, 2, nil], 1 nil
-        1 :count    uint8      3 [2, 1, 2, 0]
+        1 :count    int64      3 [2, 1, 2, 0]
         2 :"sum(f)" double     4 [1.1, 2.2, NaN, nil], 1 NaN, 1 nil
       STR
       assert_equal str, @df.group(:i) { [count(:i, :f, :b), sum] }.tdr_str(tally: 0)

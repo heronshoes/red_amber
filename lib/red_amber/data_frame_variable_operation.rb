@@ -675,9 +675,18 @@ module RedAmber
           raise DataFrameArgumentError, "Data size mismatch (#{data.size} != #{size})"
         end
 
-        a = Arrow::Array.new(data.is_a?(Vector) ? data.to_a : data)
-        fields[i] = Arrow::Field.new(key, a.value_data_type)
-        arrays[i] = Arrow::ChunkedArray.new([a])
+        if data.respond_to?(:to_arrow_chunked_array)
+          chunked_array = data.to_arrow_chunked_array
+        else
+          if data.respond_to?(:to_arrow_array)
+            a = data.to_arrow_array
+          else
+            a = Arrow::Array.new(data)
+          end
+          chunked_array = Arrow::ChunkedArray.new([a])
+        end
+        fields[i] = Arrow::Field.new(key, chunked_array.value_data_type)
+        arrays[i] = chunked_array
       end
       [fields, arrays]
     end

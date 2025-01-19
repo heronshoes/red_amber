@@ -439,6 +439,21 @@ class DataFrameVariableOperationTest < Test::Unit::TestCase
       assert_equal str2, @df2.assign { assigner2.to_a }.tdr_str
     end
 
+    sub_test_case 'Dataframe with zero n_records' do
+      test 'assign by block' do
+        str = <<~STR
+          RedAmber::DataFrame : 0 x 4 Vectors
+          Vectors : 2 numeric, 1 string, 1 boolean
+          # key type    level data_preview
+          0 :a  uint8       0 []
+          1 :b  double      0 []
+          2 :c  string      0 []
+          3 :d  boolean     0 []
+        STR
+        assert_equal str, @df.filter(@df.c == "nonexistent").assign(:b) { b.multiply(1) }.tdr_str
+      end
+    end
+
     test 'assign by both args and block' do
       assert_raise(DataFrameArgumentError) { @df2.assign(:key) {} } # rubocop:disable Lint/EmptyBlock
 

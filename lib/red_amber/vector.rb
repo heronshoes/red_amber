@@ -198,6 +198,22 @@ module RedAmber
     alias_method :values, :to_ary
     alias_method :entries, :to_ary
 
+    # Convert to an Arrow::Array.
+    #
+    # @return [Arrow::Array]
+    #   Apache Arrow array representation.
+    def to_arrow_array
+      @data.to_arrow_array
+    end
+
+    # Convert to an Arrow::ChunkedArray.
+    #
+    # @return [Arrow::ChunkedArray]
+    #   Apache Arrow chunked array representation.
+    def to_arrow_chunked_array
+      @data.to_arrow_chunked_array
+    end
+
     # Indeces from 0 to size-1 by Array.
     #
     # @return [Array]
